@@ -1,0 +1,25 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffseverson2001/12-MySQL-02-Homework.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffseverson2001/12-MySQL-02-Homework/issues"
+  },
+  "homepage": "https://github.com/jeffseverson2001/12-MySQL-02-Homework#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "express": "^4.17.1",
+    "inquirer": "^8.1.1",
+    "mysql": "^2.18.1"
+  }
+}
