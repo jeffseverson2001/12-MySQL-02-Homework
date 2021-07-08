@@ -22,7 +22,7 @@ connection.connect((err) => {
 
 //  Inquirer Questions
 function mainList() {
-    inquirer.prompt(
+    inquirer.prompt([
         {
             name: 'action',
             type: 'rawlist',
@@ -36,7 +36,7 @@ function mainList() {
                 'View Roles',
             ],
         }
-    ).then((answer) => {
+    ]).then((answer) => {
         switch (answer.action) {
             case 'Add a Department':
                 addDepartment();
@@ -72,15 +72,15 @@ function mainList() {
 
 //  Department Functions
 const addDepartment = () => {
-    inquirer.prompt({
+    inquirer.prompt([{
         name: 'department',
         type: 'input',
         message: 'Enter in Department Name: ',
-    }).then((result) => {
+    }]).then((result) => {
         const query = 'INSERT INTO department (name) VALUES (?)';
         connection.query(query, [result.department], (err, res) => {
             if (err) throw err;
-            console.log(query);
+            //console.log(query);
             console.log(`New Department ${result.department} Entered`);
             mainList();
         });
@@ -96,7 +96,86 @@ const viewDepartment = () => {
 
 
 //  Employee Functions
+const addEmployee = () => {
+    let managers = viewManagerRole(); 
+    inquirer.prompt([
+        {
+            name: 'employeeFirst',
+            type: 'input',
+            message: 'Enter in Employee First Name: ',
+        },
+        {
+            name: 'employeeLast',
+            type: 'input',
+            message: 'Enter in Employee Last Name: ',
+        },
+        {
+            name: 'manager',
+            type: 'list',
+            message: 'Select Reporing Manager',
+            choices: [managers],
+        },
+    ]).then((result) => {
+        const query = 'INSERT INTO employee (name) VALUES (?)';
+        connection.query(query, [result.department], (err, res) => {
+            if (err) throw err;
+            //console.log(query);
+            console.log(`New Department ${result.department} Entered`);
+            mainList();
+        });
+    });
+};
 
+const viewEmployee = () => {
+    connection.query('SELECT id, name FROM department', (err, res) => {
+        console.table(res);
+        mainList();
+    });
+};
 
 
 //  Role Functions
+const addRole = () => {
+    inquirer.prompt([
+        {
+            name: 'title',
+            type: 'input',
+            message: 'Enter in Role Title: ',
+        },
+        {
+            name: 'salary',
+            type: 'input',
+            message: 'Enter in Salary for Role: ',
+            validate(value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+                return false;
+            },
+        }
+    ]).then((result) => {
+        const query = 'INSERT INTO role (title, salary) VALUES (?, ?)';
+        connection.query(query, [result.title, result.salary], (err, res) => {
+            if (err) throw err;
+            //console.log(query);
+            console.log(`New Role ${result.title} Entered`);
+            mainList();
+        });
+    });
+};
+
+const viewRole = () => {
+    connection.query('SELECT id, title, salary FROM role', (err, res) => {
+        console.table(res);
+        mainList();
+    });
+};
+
+const viewManagerRole = () => {
+    connection.query(`SELECT CONCAT(e.first_name, ' ', e.last_name) AS name, r.id FROM employee e INNER JOIN role r ON e.role_id = r.id WHERE r.title = 'Lead Manager' `, (err, res) => {
+        //res.forEach(({ id, name }) => returnString = {id, name});
+        var returnString = JSON.stringify(res);
+        console.log(returnString);
+        return returnString;
+    });
+};

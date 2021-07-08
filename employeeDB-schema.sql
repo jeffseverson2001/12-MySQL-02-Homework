@@ -27,11 +27,14 @@ CREATE TABLE role (
 
 --     Add Seeds Here
 --      Employee
--- INSERT INTO employee (first_name, last_name, role_id, manager_id)
--- VALUES ('Jeff', 'Severson', )
+INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('Jeff', 'Severson', 1, 1);
+INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('Charlie', 'Smith', 3, 2);
 
 --      Department
-
-
+INSERT INTO department (name) VALUES ('Managers');
+INSERT INTO department (name) VALUES ('Sales');
 
 --      role
+INSERT INTO role (title, salary) VALUES ('Lead Manager',150000.00);
+INSERT INTO role (title, salary) VALUES ('Sr Developer',120000.00);
+INSERT INTO role (title, salary) VALUES ('Sales Rep',50000.00);
