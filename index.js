@@ -112,7 +112,6 @@ const addEmployee = () => {
             rolesArray.push({name: r.title, value: r.id},);
         });
     });
-    console.log(rolesArray);
 
     inquirer.prompt([
         {
