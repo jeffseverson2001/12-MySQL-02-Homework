@@ -97,7 +97,23 @@ const viewDepartment = () => {
 
 //  Employee Functions
 const addEmployee = () => {
-    let managers = viewManagerRole(); 
+    //  Get Managers Choice Array
+    let managersArray = [];
+    connection.query(`SELECT CONCAT(e.first_name, ' ', e.last_name) AS name, r.id FROM employee e INNER JOIN role r ON e.role_id = r.id  WHERE r.title = 'Lead Manager'`, (err, res) => {
+        res.forEach(d => {
+            managersArray.push({name: d.name, value: d.id},);
+        });
+    }); 
+
+    //  Get Roles Choice Array
+    let rolesArray = [];
+    connection.query(`SELECT title, id FROM role `, (err, res) => {
+        res.forEach(r => {
+            rolesArray.push({name: r.title, value: r.id},);
+        });
+    });
+    console.log(rolesArray);
+
     inquirer.prompt([
         {
             name: 'employeeFirst',
@@ -110,24 +126,30 @@ const addEmployee = () => {
             message: 'Enter in Employee Last Name: ',
         },
         {
-            name: 'manager',
+            name: 'employeeRole',
+            type: 'list',
+            message: 'Enter in Employee Role: ',
+            choices: rolesArray,
+        },
+        {
+            name: 'employeeManager',
             type: 'list',
             message: 'Select Reporing Manager',
-            choices: [managers],
+            choices: managersArray,
         },
     ]).then((result) => {
-        const query = 'INSERT INTO employee (name) VALUES (?)';
-        connection.query(query, [result.department], (err, res) => {
+        const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+        connection.query(query, [result.employeeFirst, result.employeeLast, result.employeeRole, result.employeeManager], (err, res) => {
             if (err) throw err;
             //console.log(query);
-            console.log(`New Department ${result.department} Entered`);
+            console.log(`New Employee ${result.department} Entered`);
             mainList();
         });
     });
 };
 
 const viewEmployee = () => {
-    connection.query('SELECT id, name FROM department', (err, res) => {
+    connection.query(`SELECT id, first_name, last_name, CONCAT(first_name, ' ', last_name) AS name FROM employee`, (err, res) => {
         console.table(res);
         mainList();
     });
@@ -171,11 +193,3 @@ const viewRole = () => {
     });
 };
 
-const viewManagerRole = () => {
-    connection.query(`SELECT CONCAT(e.first_name, ' ', e.last_name) AS name, r.id FROM employee e INNER JOIN role r ON e.role_id = r.id WHERE r.title = 'Lead Manager' `, (err, res) => {
-        //res.forEach(({ id, name }) => returnString = {id, name});
-        var returnString = JSON.stringify(res);
-        console.log(returnString);
-        return returnString;
-    });
-};
